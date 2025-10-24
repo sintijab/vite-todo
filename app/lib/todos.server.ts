@@ -3,6 +3,7 @@ export interface Todo {
   text: string;
   completed: boolean;
   createdAt: Date;
+  status?: string;
 }
 
 // In-memory store
@@ -54,4 +55,18 @@ export function deleteTodo(id: string): boolean {
     return true;
   }
   return false;
+}
+
+export function moveTodo(id: string, nextStatus: string): Todo | null {
+  const todo = todos.find(t => t.id === id);
+  if (todo) {
+    todo.status = nextStatus;
+    if (nextStatus === 'done') {
+      todo.completed = true;
+    } else if (nextStatus === 'todo') {
+      todo.completed = false;
+    }
+    return todo;
+  }
+  return null;
 }
