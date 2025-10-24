@@ -1,6 +1,5 @@
 import { Form, useSubmit, useLoaderData } from "react-router-dom";
 import { createContext, useContext, useMemo, useState, type ReactNode } from "react";
-import type { Route } from "./+types/todos";
 import { getAllTodos, addTodo, toggleTodo, deleteTodo, moveTodo } from "../lib/todos.server";
 import { COLUMNS, isValidStatus, type KanbanStatus } from "../lib/kanban.schema";
 import type { Todo } from "../lib/todos.server";
@@ -9,7 +8,7 @@ export async function loader() {
   return { todos: getAllTodos() };
 }
 
-export async function action({ request }: Route.ActionArgs) {
+export async function action({ request }: { request: Request }) {
   const formData = await request.formData();
   const intent = formData.get("intent");
 
