@@ -2,3 +2,7 @@ export type LinksFunction = () => Array<{ rel: string; href: string; crossOrigin
 export interface ErrorBoundaryProps {
   error: unknown;
 }
+export interface ActionArgs {
+  request: Request;
+  params?: Record<string, string>;
+}

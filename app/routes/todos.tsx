@@ -3,12 +3,13 @@ import { createContext, useContext, useMemo, useState, type ReactNode } from "re
 import { getAllTodos, addTodo, toggleTodo, deleteTodo, moveTodo } from "../lib/todos.server";
 import { COLUMNS, isValidStatus, type KanbanStatus } from "../lib/kanban.schema";
 import type { Todo } from "../lib/todos.server";
+import { ActionArgs } from "~/+types/root";
 
 export async function loader() {
   return { todos: getAllTodos() };
 }
 
-export async function action({ request }: { request: Request }) {
+export async function action({ request }: ActionArgs) {
   const formData = await request.formData();
   const intent = formData.get("intent");
 
