@@ -5,4 +5,5 @@ export interface ErrorBoundaryProps {
 export interface ActionArgs {
   request: Request;
   params?: Record<string, string>;
+  context?: any;
 }
