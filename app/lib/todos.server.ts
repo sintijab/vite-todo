@@ -1,3 +1,5 @@
+import { isValidStatus } from './kanban.schema';
+
 export interface Todo {
   id: string;
   text: string;
@@ -6,26 +8,30 @@ export interface Todo {
   status?: string;
 }
 
-// In-memory store
-let todos: Todo[] = [
+
+const todos: Todo[] = [
   {
     id: "1",
     text: "Learn React Router 7",
     completed: false,
     createdAt: new Date("2024-01-01"),
+    status: 'todo',
   },
   {
-    id: "2", 
+    id: "2",
     text: "Build a todo app",
     completed: true,
     createdAt: new Date("2024-01-02"),
+    status: 'done',
   },
 ];
 
-let nextId = 3;
+// In-memory store for todos (use Map for efficient lookup)
+const todosMap = new Map<string, Todo>(todos.map(todo => [todo.id, todo]));
+let nextId = todos.length + 1;
 
 export function getAllTodos(): Todo[] {
-  return [...todos].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+  return Array.from(todosMap.values()).sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 }
 
 export function addTodo(text: string): Todo {
@@ -34,13 +40,14 @@ export function addTodo(text: string): Todo {
     text,
     completed: false,
     createdAt: new Date(),
+    status: 'todo',
   };
-  todos.push(todo);
+  todosMap.set(todo.id, todo);
   return todo;
 }
 
 export function toggleTodo(id: string): Todo | null {
-  const todo = todos.find(t => t.id === id);
+  const todo = todosMap.get(id);
   if (todo) {
     todo.completed = !todo.completed;
     return todo;
@@ -49,23 +56,14 @@ export function toggleTodo(id: string): Todo | null {
 }
 
 export function deleteTodo(id: string): boolean {
-  const index = todos.findIndex(t => t.id === id);
-  if (index !== -1) {
-    todos.splice(index, 1);
-    return true;
-  }
-  return false;
+  return todosMap.delete(id);
 }
 
 export function moveTodo(id: string, nextStatus: string): Todo | null {
-  const todo = todos.find(t => t.id === id);
-  if (todo) {
+  const todo = todosMap.get(id);
+  if (todo && isValidStatus(nextStatus)) {
     todo.status = nextStatus;
-    if (nextStatus === 'done') {
-      todo.completed = true;
-    } else if (nextStatus === 'todo') {
-      todo.completed = false;
-    }
+    todo.completed = nextStatus === 'done';
     return todo;
   }
   return null;
